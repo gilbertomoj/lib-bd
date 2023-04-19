@@ -98,3 +98,42 @@ COD_BIBLIOTECA VARCHAR(4),
 CONSTRAINT PK_ESTA PRIMARY KEY(ISBN,COD_BIBLIOTECA),
 CONSTRAINT FK_ESTA_LIVRO FOREIGN KEY(ISBN) REFERENCES LIVRO(ISBN),
 CONSTRAINT FK_ESTA_BIBLIOTECA FOREIGN KEY(COD_BIBLIOTECA) REFERENCES BIBLIOTECA(COD));
+
+--------------------- CONSULTAS ---------------------
+-- ESCALAR
+-- Consulta: Projetar os nomes do bibliotecário, onde o codigo do bibliotecário tem que igual a media dos códigos das bibliotecas.
+
+SELECT A.NOME
+FROM BIBLIOTECARIO A
+WHERE A.COD_BIBLIOTECARIO = (SELECT AVG(B.COD)
+FROM BIBLIOTECA B);
+
+-- LINHA
+
+-- Consulta: Projetar o título, código da estante e código da biblioteca e que autor e título sejam iguais a do livro cujo ISBN é igual a '000005’.
+
+SELECT L.TITULO, L.COD_ESTANTE, L.COD_BIBLIOTECA
+FROM LIVRO L
+WHERE (L.AUTOR, L.TITULO) = (SELECT L.AUTOR, L.TITULO
+FROM LIVRO L
+WHERE L.ISBN = '000005');
+
+-- TABELA
+
+-- Consulta: Projetar o autor e o titulo dos livros que possuem o mesmo ISBN igual ao ISBN dos livros localizados na estante de codigo 006 e na biblioteca com codigo 002.
+
+SELECT L.AUTOR, L.TITULO
+FROM LIVRO L
+WHERE L.ISBN =ANY (SELECT L.ISBN
+FROM LIVRO L
+WHERE L.COD_ESTANTE = '006' AND
+L.COD_BIBLIOTECA = '002');
+
+-- OPERAÇÕES DE CONJUNTO
+
+-- Consulta: Projetar todos os usuários 
+
+SELECT A.CPF 
+FROM ALUNO A
+UNION
+SELECT P.CPF
